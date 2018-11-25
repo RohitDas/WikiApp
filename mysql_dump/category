@@ -1,0 +1,54 @@
+-- MySQL dump 10.16  Distrib 10.1.26-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: 10.64.48.35    Database: aawiki
+-- ------------------------------------------------------
+-- Server version	10.1.34-MariaDB
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category` (
+  `cat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `cat_title` varbinary(255) NOT NULL DEFAULT '',
+  `cat_pages` int(11) NOT NULL DEFAULT '0',
+  `cat_subcats` int(11) NOT NULL DEFAULT '0',
+  `cat_files` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`cat_id`),
+  UNIQUE KEY `cat_title` (`cat_title`),
+  KEY `cat_pages` (`cat_pages`)
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `category`
+--
+
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (2,'Candidates_for_speedy_deletion',0,0,0),(7,'User_aa-0',22,0,0),(8,'User_de',6,1,0),(9,'User_de-1',5,0,0),(10,'User_en',23,2,0),(11,'User_en-3',13,0,0),(12,'User_fr',11,2,0),(13,'User_fr-1',7,0,0),(14,'User_nl',5,1,0),(15,'User_nl-N',4,0,0),(16,'User_sk',3,1,0),(17,'User_sk-N',2,0,0),(18,'User_templates_de',1,0,0),(19,'User_templates_en',1,0,0),(20,'User_templates_fr',1,0,0),(21,'User_templates_nl',1,0,0),(23,'Wikipedia',4,3,0),(35,'User_fr-N',2,0,0),(36,'User_es',5,1,0),(37,'User_es-2',4,0,0),(38,'User_aa',1,1,0),(39,'Wikipedians_by_language',8,8,0),(40,'Language_user_templates',4,4,0),(41,'Userboxes',1,1,0),(42,'Top_Level',2,2,0),(43,'Articles',1,0,0),(44,'User_he',2,1,0),(45,'User_en-2',8,0,0),(46,'User_he-N',1,0,0),(48,'Noindexed_pages',5,0,0),(60,'Pages_with_broken_file_links',4,0,0);
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2018-11-01 19:22:21
