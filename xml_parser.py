@@ -4,7 +4,7 @@ import wikipediaapi
 import re
 import json
 
-WIKI_PATH = "enwiki-latest-pages-articles1.xml-p10p30302"
+WIKI_PATH = "aawiki-20181101-pages-meta-current.xml"
 OUTPUT_FILE = "db_info.dump"
 
 # Nicely formatted time string
@@ -85,15 +85,15 @@ with open(OUTPUT_FILE, "w") as fp:
                 print(id, rev_id, title, "|", redirect, timestamp)
                 try:
                     page = wiki_en.page(title)
+                    if page.exists():
+                        categories = process_categories(page.categories)
+                        links = process_links(page.links)
                 except Exception as e:
                     print("Error occured: ", str(e))
                     print("Reconnecting...")
                     wiki_en = wikipediaapi.Wikipedia('en')
                     print("Connected..")
-
-                if page.exists():
-                    categories = process_categories(page.categories)
-                    links = process_links(page.links)
+                    links, categories = None, None
 
                 #Other info on info pages.
                 store_page_info_dicts = {

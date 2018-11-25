@@ -25,7 +25,7 @@ SECRET_KEY = 'ss20ofpq+q+mggzbb#(-@@5v5dz&9bvlyo*=l5y64kd#x7%*mu'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['3.16.186.60', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -78,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'test_db',
-        'USER': 'root',
-        'PASSWORD': 'wolverin',
+        'USER': 'aws',
+        'PASSWORD': 'passw',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'default-character-set': 'utf8'
     }

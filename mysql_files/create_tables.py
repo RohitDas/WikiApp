@@ -16,8 +16,8 @@ def create_tabes(db):
 
 conf = {
     'host': 'localhost',
-    'user': 'root',
-    'password': 'wolverin',
+    'user': 'aws',
+    'password': 'passw',
     'database': 'test_db'
 }
 
