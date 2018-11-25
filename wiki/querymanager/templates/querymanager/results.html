@@ -1,0 +1,18 @@
+<h1>Results for query: {{query}}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<table border="1">
+  <tr>
+      {% for r in desc %}
+      <td><b>{{r}}</b></td>
+      {% endfor %}
+  </tr>
+  {% for r in results %}
+     <tr>
+         {% for i in r %}
+         <td>{{i}}</td>
+         {% endfor %}
+     </tr>
+  {% endfor %}
+</table>

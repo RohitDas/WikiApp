@@ -1,0 +1,24 @@
+<h1>Simple Query Manager</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'querymanager:result' %}" method="post">
+{% csrf_token %}
+    <h1>Page query</h1>
+    <input type="text" name="page" id="page">
+<input type="submit" value="Query">
+</form>
+<form action="{% url 'querymanager:result' %}" method="post">
+{% csrf_token %}
+    <h1>Category query</h1>
+    <input type="text" name="category" id="category">
+<input type="submit" value="Query">
+</form>
+
+<form action="{% url 'querymanager:result' %}" method="post">
+{% csrf_token %}
+    <h1>PageLinks query</h1>
+    <input type="text" name="pl" id="pl">
+<input type="submit" value="Query">
+</form>
+

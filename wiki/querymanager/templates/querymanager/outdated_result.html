@@ -1,0 +1,17 @@
+<h1>Results for most outdated page for category: {{category}}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<table border="1">
+  <tr>
+      {% for r in desc %}
+      <td><b>{{r}}</b></td>
+      {% endfor %}
+  </tr>
+    <tr>
+         {% for r in results %}
+         <td>{{r}}</td>
+           {% endfor %}
+     </tr>
+
+</table>
