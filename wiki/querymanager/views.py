@@ -82,12 +82,12 @@ def get_most_outdated(request):
             most_outdated_page = cache.get(category)
         else:
             # The first query provides the timestamp of the maximum last modification time of the pages referred to by the page belonging to a category.
-            query_1 = """select cl_from, MAX(t7.ts_page) from (select cl_from, page_id, ts as ts_page from (select cl_from, page_id from (select * from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3, page as t4 where t3.pl_title = t4.page_title) as t5 join wiki_meta as t6 on t5.page_id = t6.id) as t7 group by t7.cl_from;""".format(category)
+            query_1 = """select cl_from, MAX(t7.ts_page) from (select cl_from, page_id, ts as ts_page from (select cl_from, page_id from (select * from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3, page as t4 where t3.pl_title = t4.page_title) as t5 join wiki_meta as t6 on t5.page_id = t6.wid) as t7 group by t7.cl_from;""".format(category)
             cursor.execute(query_1)
             results_1 = cursor.fetchall()
 
             # The second query provides the timestamp of the last modification time of the pages belonging to a category.
-            query_2 = """select cl_from, MAX(ts) from (select cl_from, ts from (select cl_from from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3 join wiki_meta as t4 where t3.cl_from = t4.id) as t5 group by t5.cl_from;""".format(category)
+            query_2 = """select cl_from, MAX(ts) from (select cl_from, ts from (select cl_from from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3 join wiki_meta as t4 where t3.cl_from = t4.wid) as t5 group by t5.cl_from;""".format(category)
             cursor.execute(query_2)
             results_2 = cursor.fetchall()
 

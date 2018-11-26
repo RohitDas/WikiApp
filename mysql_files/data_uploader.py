@@ -41,34 +41,54 @@ class MysqlPopulator(object):
         })
         categories = doc['categories']
 
-        sql = "insert into wiki_meta (id, revId, title, redirect, category, ts) values (%s, %s, %s, %s, %s, %s)"
-
-        for category in categories:
-            new_doc_duplicate = deepcopy(new_doc)
-            new_doc_duplicate.update({
-                "category": category
+        sql = "insert into wiki_meta (wid, revId, title, redirect, category, ts) values (%s, %s, %s, %s, %s, %s)"
+        if categories is None:
+            new_doc.update({
+                "category": ""
             })
-            new_doc_tuple = tuple([new_doc_duplicate[k] for k in ('id', 'revId', 'title', 'redirect', 'category', 'ts')])
+            new_doc_tuple = tuple([new_doc[k] for k in ('id', 'revId', 'title', 'redirect', 'category', 'ts')])
             try:
                 self.cursor.execute(sql, new_doc_tuple)
             except Exception as e:
                 print("Error: " + str(e))
+        else:
+            for category in categories:
+                new_doc_duplicate = deepcopy(new_doc)
+                new_doc_duplicate.update({
+                    "category": category
+                })
+                new_doc_tuple = tuple([new_doc_duplicate[k] for k in ('id', 'revId', 'title', 'redirect', 'category', 'ts')])
+                try:
+                    self.cursor.execute(sql, new_doc_tuple)
+                except Exception as e:
+                    print("Error: " + str(e))
 
     def populate_link_col(self, doc):
         new_doc = dict((k, doc[k]) for k in ('id', 'title'))
         links = doc['links']
-        sql = "insert into wiki_link (id, title, link, pos) values (%s, %s, %s, %s)"
-        for idx, link in enumerate(links):
-            new_doc_duplicate = deepcopy(new_doc)
-            new_doc_duplicate.update({
-                'link': link,
-                'pos': idx
+        sql = "insert into wiki_link (wid, title, link, pos) values (%s, %s, %s, %s)"
+        if links is None:
+            new_doc.update({
+                "link": "",
+                "pos": -1
             })
-            new_doc_tuple = tuple([new_doc_duplicate[k] for k in ('id', 'title', 'link', 'pos')])
+            new_doc_tuple = tuple([new_doc[k] for k in ('id', 'title', 'link' , 'pos')])
             try:
                 self.cursor.execute(sql, new_doc_tuple)
             except Exception as e:
                 print("Error: " + str(e))
+        else:
+            for idx, link in enumerate(links):
+                new_doc_duplicate = deepcopy(new_doc)
+                new_doc_duplicate.update({
+                    'link': link,
+                    'pos': idx
+                })
+                new_doc_tuple = tuple([new_doc_duplicate[k] for k in ('id', 'title', 'link', 'pos')])
+                try:
+                    self.cursor.execute(sql, new_doc_tuple)
+                except Exception as e:
+                    print("Error: " + str(e))
 
     def populate(self, db_file):
         for idx, doc in enumerate(self.generate_docs(db_file)):
@@ -82,11 +102,11 @@ class MysqlPopulator(object):
 
 if __name__ == "__main__":
     db = MySQLdb.connect(host="localhost",
-                         user="root",
-                         password="wolverin",
+                         user="aws",
+                         password="passw",
                          database="test_db")
 
-    DB_FILE = '../db_info.dump.backup'
+    DB_FILE = '../db_info.dump'
     mysql_populator = MysqlPopulator(db)
     mysql_populator.populate(DB_FILE)
 
