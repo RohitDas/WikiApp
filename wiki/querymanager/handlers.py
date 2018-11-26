@@ -11,17 +11,21 @@ error_logger = logging.getLogger("django_error")
 def handle_page_query(request):
     start_time = time.time()
     query_text = request.POST['page']
+    logger.info("Running query: {}".format(query_text))
     error_message = ""
     desc = ('page_id','page_title', 'page_is_new', 'page_links_updated', 'page_len')
     if cache.has_key(query_text):
+        logger.info('Data is fetched from cache')
         results = cache.get(query_text)
     else:
         try:
+            logger.info('Data is fetched from database')
             page_objs = Page.objects.raw(query_text)
             results = []
             for page_obj in page_objs:
                 results.append(page_obj.content())
             cache.put(query_text, results)
+            logger.info('Data stored in cache')
         except Exception as e:
             error_logger.error(str(e))
             error_message = str(e)
@@ -40,6 +44,7 @@ def handle_page_query(request):
 def handle_category_query(request):
     start_time = time.time()
     query_text = request.POST['category']
+    logger.info("Running query: {}".format(query_text))
     desc = ('cat_id', 'cat_title')
     error_message = ''
     if cache.has_key(query_text):
@@ -69,6 +74,7 @@ def handle_category_query(request):
 def handle_pagelinks_query(request):
     start_time = time.time()
     query_text = request.POST['pl']
+    logger.info("Running query: {}".format(query_text))
     desc = ('pl_from', 'pl_namespace', 'pl_title', 'pl_from_namespace')
     error_message = ''
     if cache.has_key(query_text):

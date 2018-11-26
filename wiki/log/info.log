@@ -1,0 +1,92 @@
+2018-11-26 05:32:53,043 [INFO]- Received request <WSGIRequest: GET '/query/general_send'>
+2018-11-26 06:18:02,008 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 06:18:04,440 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:20:07,597 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:20:45,460 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:20:56,206 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:23:42,180 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 06:23:43,969 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:23:50,337 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:34:09,154 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:36:17,362 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:40:08,850 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:40:17,301 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:42:08,477 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:42:11,794 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:42:16,269 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:42:19,666 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:42:23,778 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:44:35,626 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 06:44:39,084 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:44:56,487 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:45:11,807 [INFO]- Received request <WSGIRequest: GET '/query/results'>
+2018-11-26 06:45:40,919 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:45:44,319 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:45:47,828 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:48:02,011 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 06:48:05,321 [INFO]- Received request <WSGIRequest: POST '/query/results'>
+2018-11-26 07:13:30,806 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:13:32,039 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:13:32,268 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:15:08,774 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:15:12,010 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:15:56,382 [INFO]- Received request <WSGIRequest: GET '/query/send'>
+2018-11-26 07:16:00,276 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 07:19:59,262 [INFO]- Received request <WSGIRequest: GET '/general_send'>
+2018-11-26 07:20:34,092 [INFO]- Received request <WSGIRequest: GET '/general_send'>
+2018-11-26 07:20:36,311 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 07:26:05,223 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 07:26:08,409 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 07:26:10,997 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:26:20,304 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:26:24,841 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:26:34,419 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:26:39,542 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:26:44,932 [INFO]- Received request <WSGIRequest: GET '/general_send'>
+2018-11-26 07:26:53,651 [INFO]- Data fetched from database
+2018-11-26 07:26:53,653 [INFO]- Data is cached
+2018-11-26 07:29:10,727 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 07:29:13,086 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:31:26,290 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:33:23,639 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:33:23,639 [INFO]- Data is fetched from database
+2018-11-26 07:33:23,668 [INFO]- Data stored in cache
+2018-11-26 07:33:42,218 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:33:42,219 [INFO]- Data is fetched from cache
+2018-11-26 07:33:50,489 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:33:50,490 [INFO]- Data is fetched from cache
+2018-11-26 07:56:05,992 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:56:05,993 [INFO]- Running query: select * from page;
+2018-11-26 07:56:05,993 [INFO]- Data is fetched from database
+2018-11-26 07:56:06,016 [INFO]- Data stored in cache
+2018-11-26 07:58:40,233 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 07:58:40,233 [INFO]- Running query: select * from page;
+2018-11-26 07:58:40,233 [INFO]- Data is fetched from cache
+2018-11-26 08:12:09,244 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:12:09,245 [INFO]- Running query: select * from page;
+2018-11-26 08:12:09,245 [INFO]- Data is fetched from cache
+2018-11-26 08:12:15,559 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:12:15,559 [INFO]- Running query: select * from page;
+2018-11-26 08:12:15,560 [INFO]- Data is fetched from cache
+2018-11-26 08:13:07,265 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:13:07,265 [INFO]- Running query: select * from page;
+2018-11-26 08:13:07,265 [INFO]- Data is fetched from cache
+2018-11-26 08:13:35,350 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 08:13:36,464 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:13:36,464 [INFO]- Running query: select * from page;
+2018-11-26 08:13:36,464 [INFO]- Data is fetched from cache
+2018-11-26 08:14:35,188 [INFO]- Received request <WSGIRequest: GET '/send'>
+2018-11-26 08:14:39,032 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:14:39,033 [INFO]- Running query: select * from category
+2018-11-26 08:14:59,942 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:14:59,942 [INFO]- Running query: select * from category
+2018-11-26 08:21:45,703 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:21:45,704 [INFO]- Running query: select * from category
+2018-11-26 08:22:01,329 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:22:01,329 [INFO]- Running query: select * from category
+2018-11-26 08:22:29,746 [INFO]- Received request <WSGIRequest: POST '/results'>
+2018-11-26 08:22:29,747 [INFO]- Running query: select * from pagelinks
+2018-11-26 08:22:47,225 [INFO]- Received request <WSGIRequest: GET '/general_send'>
+2018-11-26 08:22:51,284 [INFO]- Running query: select * from category limit 5
+2018-11-26 08:22:51,284 [INFO]- Data fetched from database
+2018-11-26 08:22:51,285 [INFO]- Data is cached

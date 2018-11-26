@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.db import connection
 from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query
 from .cache import cache
+from .query_stats import query_stats
 
 logger = logging.getLogger("info")
 error_logger = logging.getLogger("django_error")
@@ -38,6 +39,7 @@ def general_results(request):
     cursor = connection.cursor()
     try:
         query = request.POST['query']
+        logger.info("Running query: {}".format(query))
         if cache.has_key(query):
             logger.info("Data fetched from cache")
             desc, results = cache.get(query)
@@ -120,3 +122,8 @@ def get_most_outdated(request):
             'results': ()
         })
 
+def recent(request):
+    recent = query_stats.get_latest()
+    return render(request, "querymanager/recent.html", {
+        'recent': recent
+    })

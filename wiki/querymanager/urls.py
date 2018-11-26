@@ -10,5 +10,6 @@ urlpatterns = [
     path('results', views.results, name='result'),
     path('general_results', views.general_results, name='general_results'),
     path('category_view', views.category_view, name='category_view'),
-    path('get_most_outdated', views.get_most_outdated, name='get_most_outdated')
+    path('get_most_outdated', views.get_most_outdated, name='get_most_outdated'),
+    path('recent', views.recent, name='recent')
 ]
