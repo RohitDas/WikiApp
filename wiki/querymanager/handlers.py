@@ -1,45 +1,96 @@
+import logging
 from django.shortcuts import render
 from .models import Page, Category, Pagelinks
 from .cache import cache
+import time
+
+logger = logging.getLogger("info")
+error_logger = logging.getLogger("django_error")
+
 
 def handle_page_query(request):
+    start_time = time.time()
     query_text = request.POST['page']
-    print(query_text)
-    page_objs = Page.objects.raw(query_text)
-    results = []
-    for page_obj in page_objs:
-        results.append(page_obj.content())
+    error_message = ""
+    desc = ('page_id','page_title', 'page_is_new', 'page_links_updated', 'page_len')
+    if cache.has_key(query_text):
+        results = cache.get(query_text)
+    else:
+        try:
+            page_objs = Page.objects.raw(query_text)
+            results = []
+            for page_obj in page_objs:
+                results.append(page_obj.content())
+            cache.put(query_text, results)
+        except Exception as e:
+            error_logger.error(str(e))
+            error_message = str(e)
+            results = []
+            desc = []
+    end_time = time.time()
+
     return render(request, "querymanager/results.html", {
         'results': results,
-        'error_message': '',
+        'error_message': error_message,
         'query': query_text,
-        'desc': ('page_id','page_title', 'page_is_new', 'page_links_updated', 'page_len')
+        'desc': desc,
+        'time_taken': end_time - start_time
     })
 
 def handle_category_query(request):
-    query_text = request.POST['pl']
-    cat_objs = Category.objects.raw(query_text)
-    results = []
-    for cat_obj in cat_objs:
-        results.append(cat_obj.content())
+    start_time = time.time()
+    query_text = request.POST['category']
+    desc = ('cat_id', 'cat_title')
+    error_message = ''
+    if cache.has_key(query_text):
+        results = cache.get(query_text)
+    else:
+        try:
+            cat_objs = Category.objects.raw(query_text)
+            results = []
+            for cat_obj in cat_objs:
+                results.append(cat_obj.content())
+            cache.put(query_text, results)
+        except Exception as e:
+            error_logger.error(str(e))
+            error_message = str(e)
+            results = []
+            desc = []
+    end_time = time.time()
     return render(request, "querymanager/results.html", {
         'results': results,
-        'error_message': '',
+        'error_message': error_message,
         'query': query_text,
-        'desc': ('cat_id', 'cat_title')
+        'desc': desc,
+        'time_taken': end_time - start_time
     })
 
 
 def handle_pagelinks_query(request):
-    print(request.POST)
+    start_time = time.time()
     query_text = request.POST['pl']
-    pl_objs = Pagelinks.objects.raw(query_text)
-    results = []
-    for pl_obj in pl_objs:
-        results.append(pl_obj.content())
+    desc = ('pl_from', 'pl_namespace', 'pl_title', 'pl_from_namespace')
+    error_message = ''
+    if cache.has_key(query_text):
+        results = cache.get(query_text)
+    else:
+        try:
+            pl_objs = Pagelinks.objects.raw(query_text)
+            results = []
+            for pl_obj in pl_objs:
+                results.append(pl_obj.content())
+            cache.put(query_text, results)
+        except Exception as e:
+            error_logger.error(str(e))
+            error_message = str(e)
+            results = []
+            desc = []
+
+    end_time = time.time()
     return render(request, "querymanager/results.html", {
         'results': results,
-        'error_message': '',
+        'error_message': error_message,
         'query': query_text,
-        'desc': ('pl_from', 'pl_namespace', 'pl_title', 'pl_from_namespace')
+        'desc': desc,
+        'time_taken': end_time - start_time
     })

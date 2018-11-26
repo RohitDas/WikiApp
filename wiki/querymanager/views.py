@@ -1,23 +1,31 @@
 import time
+import logging
 from django.shortcuts import render
 from django.db import connection
 from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query
 from .cache import cache
-QUERY_TYPES = ['page', 'category']
 
+logger = logging.getLogger("info")
+error_logger = logging.getLogger("django_error")
+
+def index(request):
+    return render(request, "querymanager/index.html", {})
 
 def query(request):
     """
     View to handle the query page
     """
+    logger.info("Received request {}".format(str(request)))
     return render(request, 'querymanager/query.html', {})
 
 
 def general_query(request):
+    logger.info("Received request {}".format(str(request)))
     return render(request, 'querymanager/general_query.html', {})
 
 
 def results(request):
+    logger.info("Received request {}".format(str(request)))
     if 'page' in request.POST:
         return handle_page_query(request)
     elif 'category' in request.POST:
@@ -31,11 +39,14 @@ def general_results(request):
     try:
         query = request.POST['query']
         if cache.has_key(query):
+            logger.info("Data fetched from cache")
             desc, results = cache.get(query)
         else:
+            logger.info("Data fetched from database")
             cursor.execute(query)
             results = cursor.fetchall()
             desc = [desc[0]for desc in cursor.description]
+            logger.info("Data is cached")
             cache.put(query, (desc, results))
         return render(request, "querymanager/results.html", {
             'results': results,
@@ -44,6 +55,7 @@ def general_results(request):
             'desc': desc
         })
     except Exception as e:
+        error_logger.error(str(e))
         return render(request, "querymanager/results.html", {
             'results': {},
             'error_message': str(e),
@@ -79,8 +91,6 @@ def get_most_outdated(request):
             cursor.execute(query_2)
             results_2 = cursor.fetchall()
 
-            print(results_2, results_1)
-
             page_id_to_timestamp = {}
             for result in results_2:
                 page_id_to_timestamp.update({
@@ -95,14 +105,14 @@ def get_most_outdated(request):
             most_outdated_page = sorted(page_id_to_timestamp.items(), key=lambda k: k[1], reverse=True)[0]
             cache.put(category, most_outdated_page)
 
-        print("Here", most_outdated_page[0])
         return render(request, "querymanager/outdated_result.html", {
             'category': category,
             'error_message': None,
             'desc': ('page_id', 'difference', 'time_taken(secs)'),
             'results': (most_outdated_page[0], most_outdated_page[1], time.time() - start_time)})
+
     except Exception as e:
-        print("Hello", str(e))
+        error_logger.error(str(e))
         render(request, "querymanager/outdated_result.html", {
             'category': category,
             'error_message': str(e),

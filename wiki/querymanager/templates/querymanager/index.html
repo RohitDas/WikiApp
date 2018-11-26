@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WikiApp</title>
+</head>
+<body>
+<h1>Welcome to the WikiApp</h1>
+<h1>You can access the following Wiki Information:</h1>
+<table border='1'>
+    <tr><td>Page</td><td>Contains information on a wikipedia page</td></tr>
+    <tr><td>Category</td><td>Contains information on a category to which a page belongs</td></tr>
+    <tr><td>Pagelinks</td><td>Conatains information about the links between pages</td></tr>
+    <tr><td>CategoryLinks</td><td>Contains information on the category to which a page belongs to</td></tr>
+    <tr><td>ExternalLinks</td><td>Contains externallinks</td></tr>
+    <tr><td>WikiMeta</td><td>Contains metadata about wiki pages</td></tr>
+    <tr><td>WikiLinks</td><td>Other information about wiki pages</td></tr>
+</table>
+<h1> To access per table info <a href="{% url 'querymanager:query' %}"> CLICK here! </a></h1>
+<h1> Make SQL queries across tables <a href="{% url 'querymanager:general_query' %}"> CLICK here </a></h1>
+</body>
+</html>

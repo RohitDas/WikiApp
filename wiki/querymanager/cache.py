@@ -5,6 +5,11 @@
 from datetime import datetime
 
 class Cache(object):
+    """
+        A very simple LRU Cache implementation of size of num_entries.
+        put(): Worst case time complexity is O(num_entries), has it iterates for the keys to find the oldest timestamped key
+        In the next implementation: shall use a combination of HashMap and linked list to reduce the time complexity.
+    """
     def __init__(self, num_entries):
         self.hash_to_value = {}
         self.num_entries =  num_entries
@@ -33,8 +38,9 @@ class Cache(object):
     def get(self, key):
         if hash(key) not in self.hash_to_value:
             raise Exception("Key not found")
-
-        return self.hash_to_value[hash(key)]
-
+        #update the timestamp
+        val = self.hash_to_value[hash(key)]
+        self.hash_to_value[hash(key)] = (val[0], datetime.now())
+        return val[0]
 
 cache = Cache(500)

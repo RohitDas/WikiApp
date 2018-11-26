@@ -18,5 +18,6 @@ from django.urls import include, path
 
 urlpatterns = [
     path('query/', include('querymanager.urls', namespace='querymanager')),
+    path('', include('querymanager.urls', namespace='querymanager2')),
     path('admin/', admin.site.urls),
 ]
