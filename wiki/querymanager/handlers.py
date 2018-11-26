@@ -1,6 +1,6 @@
 import logging
 from django.shortcuts import render
-from .models import Page, Category, Pagelinks
+from .models import Page, Category, Pagelinks, Categorylinks
 from .cache import cache
 import time
 
@@ -85,6 +85,36 @@ def handle_pagelinks_query(request):
             results = []
             for pl_obj in pl_objs:
                 results.append(pl_obj.content())
+            cache.put(query_text, results)
+        except Exception as e:
+            error_logger.error(str(e))
+            error_message = str(e)
+            results = []
+            desc = []
+
+    end_time = time.time()
+    return render(request, "querymanager/results.html", {
+        'results': results,
+        'error_message': error_message,
+        'query': query_text,
+        'desc': desc,
+        'time_taken': end_time - start_time
+    })
+
+def handle_categorylinks_query(request):
+    start_time = time.time()
+    query_text = request.POST['cl']
+    logger.info("Running query: {}".format(query_text))
+    desc = ('cl_from', 'self.cl_to', 'self.cl_collation', 'self.cl_sortkey', 'self.cl_timestamp')
+    error_message = ''
+    if cache.has_key(query_text):
+        results = cache.get(query_text)
+    else:
+        try:
+            cl_objs = Categorylinks.objects.raw(query_text)
+            results = []
+            for cl_obj in cl_objs:
+                results.append(cl_obj.content())
             cache.put(query_text, results)
         except Exception as e:
             error_logger.error(str(e))

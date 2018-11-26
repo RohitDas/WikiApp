@@ -3,20 +3,12 @@ from copy import deepcopy
 import json
 from datetime import datetime
 
-# DB_FILE = '../db_info.dump.backup'
-#
-# db = MySQLdb.connect(host="localhost",
-#                      user="root",
-#                      password="wolverin",
-#                      database="test_db")
-# db.set_character_set('utf8')
-# cursor = db.cursor()
-#
-# cursor.execute('SET NAMES utf8;')
-# cursor.execute('SET CHARACTER SET utf8;')
-# cursor.execute('SET character_set_connection=utf8;')
-
 class MysqlPopulator(object):
+    """
+        This reads the db_info.dump which is creator by the xml_parser and fills wiki_meta and wiki_links
+        table.
+    """
+
     def __init__(self, db, encoding='utf8'):
         self.db = db
         self.cursor = db.cursor()
@@ -72,7 +64,7 @@ class MysqlPopulator(object):
                 "link": "",
                 "pos": -1
             })
-            new_doc_tuple = tuple([new_doc[k] for k in ('id', 'title', 'link' , 'pos')])
+            new_doc_tuple = tuple([new_doc[k] for k in ('id', 'title', 'link', 'pos')])
             try:
                 self.cursor.execute(sql, new_doc_tuple)
             except Exception as e:
@@ -102,8 +94,8 @@ class MysqlPopulator(object):
 
 if __name__ == "__main__":
     db = MySQLdb.connect(host="localhost",
-                         user="aws",
-                         password="passw",
+                         user="root",
+                         password="wolverin",
                          database="test_db")
 
     DB_FILE = '../db_info.dump'

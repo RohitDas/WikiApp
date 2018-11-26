@@ -42,8 +42,14 @@ class Categorylinks(models.Model):
         db_table = 'categorylinks'
         unique_together = (('cl_from', 'cl_to'),)
 
+    def content(self):
+        return (self.cl_from, self.cl_to, self.cl_collation, self.cl_sortkey, self.cl_timestamp)
+
     def __repr__(self):
         return "({},{},{},{},{})".format(self.cl_from, self.cl_to, self.cl_collation, self.cl_sortkey, self.cl_timestamp)
+
+    def __str__(self):
+       return "({},{},{},{},{})".format(self.cl_from, self.cl_to, self.cl_collation, self.cl_sortkey,self.cl_timestamp)
 
 class Page(models.Model):
     page_id = models.AutoField(primary_key=True)

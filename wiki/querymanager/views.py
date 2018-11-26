@@ -2,7 +2,7 @@ import time
 import logging
 from django.shortcuts import render
 from django.db import connection
-from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query
+from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query, handle_categorylinks_query
 from .cache import cache
 from .query_stats import query_stats
 
@@ -33,9 +33,12 @@ def results(request):
         return handle_category_query(request)
     elif 'pl' in request.POST:
         return handle_pagelinks_query(request)
+    elif 'cl' in request.POST:
+        return handle_categorylinks_query(request)
 
 
 def general_results(request):
+    start_time = time.time()
     cursor = connection.cursor()
     try:
         query = request.POST['query']
@@ -50,19 +53,23 @@ def general_results(request):
             desc = [desc[0]for desc in cursor.description]
             logger.info("Data is cached")
             cache.put(query, (desc, results))
+        end_time = time.time()
         return render(request, "querymanager/results.html", {
             'results': results,
             'error_message': '',
             'query': query,
-            'desc': desc
+            'desc': desc,
+            'time_taken': end_time - start_time
         })
     except Exception as e:
         error_logger.error(str(e))
+        end_time = time.time()
         return render(request, "querymanager/results.html", {
             'results': {},
             'error_message': str(e),
             'query': query,
-            'desc': desc
+            'desc': desc,
+            'time_taken': end_time - start_time
         })
 
 

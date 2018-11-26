@@ -22,3 +22,12 @@
 <input type="submit" value="Query">
 </form>
 
+<form action="{% url 'querymanager:result' %}" method="post">
+{% csrf_token %}
+    <h1>CategoryLinks query</h1>
+    <input type="text" name="cl" id="cl">
+<input type="submit" value="Query">
+</form>
+
+
+

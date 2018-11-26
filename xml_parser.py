@@ -7,8 +7,10 @@ import json
 WIKI_PATH = "aawiki-20181101-pages-meta-current.xml"
 OUTPUT_FILE = "db_info.dump"
 
-# Nicely formatted time string
 def hms_string(sec_elapsed):
+    """
+    Nicely formatted time string
+    """
     h = int(sec_elapsed / (60 * 60))
     m = int((sec_elapsed % (60 * 60)) / 60)
     s = sec_elapsed % 60
@@ -51,7 +53,6 @@ wiki_en = wikipediaapi.Wikipedia('en')
 with open(OUTPUT_FILE, "w") as fp:
 
     for event, elem in etree.iterparse(WIKI_PATH, events=('start', 'end')):
-        #print(event, elem.tag)
         tname = strip_tag_name(elem.tag)
 
         if event == 'start':
