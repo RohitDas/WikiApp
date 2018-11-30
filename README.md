@@ -59,7 +59,7 @@ end i chose Mysql for the following reason.
    (Eg. NoSqlBooster for MongoDB)
 
 ###About Data.
-Data link: https://ftp.acc.umu.se/mirror/wikimedia.org/dumps/aawiki/20181101/
+Data link: https://dumps.wikimedia.org/enwiki/20180820/
 
 https://www.mediawiki.org/wiki/ outlines the structure in which the wiki dump should be made
 and distributed.
@@ -268,7 +268,7 @@ http://3.16.186.60:8000/
 ```
 
 # FUTURE WORK
-
+* Apply pagination.
 * Advanced query stats:  Currently, I have implemented a simple log tailer, that looks for
   specific query lines, and calculates the top 50 recent queries made by different users. However, with other technologies out there, most prominent of them
   being ElasticSearch server, along with a client that tails the log file, and sends messages to 
@@ -330,3 +330,4 @@ particular case.
 
 
 
+    
