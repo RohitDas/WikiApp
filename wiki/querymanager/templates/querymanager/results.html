@@ -11,8 +11,33 @@
   {% for r in results %}
      <tr>
          {% for i in r %}
-         <td>{{i}}</td>
+         <td>{{ i }}</td>
          {% endfor %}
+
      </tr>
   {% endfor %}
 </table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+             <form action="?page={{ page.previous_page_number }}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="{{ query }}" name="{{name}}" id="page">
+            <button type="submit">&laquo;</button>
+            </form>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}.
+        </span>
+
+        {% if page.has_next %}
+            <form action="?page={{ page.next_page_number }}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ query }}" name="{{ name }}" id="page1">
+            <button type="submit">&raquo;</button>
+            </form>
+        {% endif %}
+    </span>
+</div>

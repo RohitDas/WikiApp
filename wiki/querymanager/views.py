@@ -5,6 +5,7 @@ from django.db import connection
 from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query, handle_categorylinks_query
 from .cache import cache
 from .query_stats import query_stats
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
 logger = logging.getLogger("info")
 error_logger = logging.getLogger("django_error")
@@ -45,21 +46,32 @@ def general_results(request):
         logger.info("Running query: {}".format(query))
         if cache.has_key(query):
             logger.info("Data fetched from cache")
-            desc, results = cache.get(query)
+            page = request.GET.get('page', 1)
+            desc, results, pages = cache.get(query + str(page))
         else:
             logger.info("Data fetched from database")
             cursor.execute(query)
-            results = cursor.fetchall()
+            objs = cursor.fetchall()
             desc = [desc[0]for desc in cursor.description]
+            paginator = Paginator(objs, 50)  # Show 50 contacts per page
+            page = request.GET.get('page', 1)
+            print('page', page)
+            pages = paginator.get_page(page)
+            results = []
+            for page_obj in pages:
+                results.append(page_obj)
+            cache.put(query + str(page), (desc, results, pages))
+            logger.info('Data stored in cache')
             logger.info("Data is cached")
-            cache.put(query, (desc, results))
         end_time = time.time()
         return render(request, "querymanager/results.html", {
             'results': results,
             'error_message': '',
             'query': query,
+            'page': pages,
             'desc': desc,
-            'time_taken': end_time - start_time
+            'time_taken': end_time - start_time,
+            'name': 'query'
         })
     except Exception as e:
         error_logger.error(str(e))
@@ -91,27 +103,13 @@ def get_most_outdated(request):
             most_outdated_page = cache.get(category)
         else:
             # The first query provides the timestamp of the maximum last modification time of the pages referred to by the page belonging to a category.
-            query_1 = """select cl_from, MAX(t7.ts_page) from (select cl_from, page_id, ts as ts_page from (select cl_from, page_id from (select * from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3, page as t4 where t3.pl_title = t4.page_title) as t5 join wiki_meta as t6 on t5.page_id = t6.wid) as t7 group by t7.cl_from;""".format(category)
-            cursor.execute(query_1)
-            results_1 = cursor.fetchall()
-
-            # The second query provides the timestamp of the last modification time of the pages belonging to a category.
-            query_2 = """select cl_from, MAX(ts) from (select cl_from, ts from (select cl_from from categorylinks as t1 join pagelinks as t2 on t1.cl_from = t2.pl_from where t1.cl_to = "{}") as t3 join wiki_meta as t4 where t3.cl_from = t4.wid) as t5 group by t5.cl_from;""".format(category)
-            cursor.execute(query_2)
-            results_2 = cursor.fetchall()
-
-            page_id_to_timestamp = {}
-            for result in results_2:
-                page_id_to_timestamp.update({
-                    result[0]: result[1]
-                })
-
-            for result in results_1:
-                if result[0]  in page_id_to_timestamp:
-                    page_id_to_timestamp.update({
-                        result[0]: result[1] - page_id_to_timestamp[result[0]]
-                    })
-            most_outdated_page = sorted(page_id_to_timestamp.items(), key=lambda k: k[1], reverse=True)[0]
+            query = """select distinct v2.pl_from as page_id, v2.pl_title as title,  max(w.ts - w1.ts) as diff from (select pl.pl_from, pl.pl_title, p.page_id from pagelinks as pl, page as p, (select p.page_id, p.page_title from categorylinks 
+            as c,page as p  where c.cl_to = "{}" and c.cl_from = p.page_id) as v1 where v1.page_id = pl.pl_from and p.page_title = pl.pl_title) as v2, wiki_meta as w, wiki_meta as w1  where v2.pl_from = w.id and v2.page_id = w1.id and v2.pl_from != v2.page_id 
+            group by v2.pl_from, v2.pl_title order by diff DESC limit 1;""".format(category)
+            print(query)
+            cursor.execute(query)
+            most_outdated_page = cursor.fetchall()[0]
+            print(most_outdated_page)
             cache.put(category, most_outdated_page)
 
         return render(request, "querymanager/outdated_result.html", {
