@@ -37,8 +37,10 @@ def results(request):
     elif 'cl' in request.POST:
         return handle_categorylinks_query(request)
 
+g_paginator, g_desc= None, None
 
 def general_results(request):
+    global  g_paginator, g_desc
     start_time = time.time()
     cursor = connection.cursor()
     try:
@@ -50,19 +52,22 @@ def general_results(request):
             desc, results, pages = cache.get(query + str(page))
         else:
             logger.info("Data fetched from database")
-            cursor.execute(query)
-            objs = cursor.fetchall()
-            desc = [desc[0]for desc in cursor.description]
-            paginator = Paginator(objs, 50)  # Show 50 contacts per page
             page = request.GET.get('page', 1)
+            if page == 1:
+                cursor.execute(query)
+                objs = cursor.fetchall()
+                g_desc = [desc[0]for desc in cursor.description]
+                g_paginator = Paginator(objs, 50)  # Show 50 contacts per page
+
             print('page', page)
-            pages = paginator.get_page(page)
+            pages = g_paginator.get_page(page)
             results = []
             for page_obj in pages:
                 results.append(page_obj)
-            cache.put(query + str(page), (desc, results, pages))
+            cache.put(query + str(page), (g_desc, results, pages))
             logger.info('Data stored in cache')
             logger.info("Data is cached")
+            desc = g_desc
         end_time = time.time()
         return render(request, "querymanager/results.html", {
             'results': results,
