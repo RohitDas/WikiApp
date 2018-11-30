@@ -287,3 +287,46 @@ http://3.16.186.60:8000/
 https://github.com/RohitDas/WikiApp/
 ```
 
+
+
+#Getting most outdated link.
+
+```
+Running get outdated query for category = 'User_sk', provides the following information.
+
+mysql> select distinct v2.pl_from, v2.page_id, w.ts - w1.ts from (select pl.pl_from, pl.pl_title, p.page_id from pagelinks as pl, page as p, 
+(select p.page_id, p.page_title from categorylinks as c,page as p  where c.cl_to = "User_sk" and c.cl_from = p.page_id) as v1 where v1.page_id = pl.pl_from and p.page_title = pl.pl_title) as v2,
+ wiki_meta as w, wiki_meta as w1  where v2.pl_from = w.id and v2.page_id = w1.id and v2.pl_from != v2.page_id;
++---------+---------+--------------+
+| pl_from | page_id | w.ts - w1.ts |
++---------+---------+--------------+
+|    1826 |    1980 |     80076110 |
+|    1826 |    1982 |  10506189809 |
+|    1980 |    1982 |  10426113699 |
++---------+---------+--------------+
+3 rows in set (0.36 sec)
+
+```
+Modifying the query a bit, gives you.
+
+```
+select distinct v2.pl_from, max(w.ts - w1.ts) as diff from (select pl.pl_from, pl.pl_title, p.page_id from pagelinks as pl,
+ page as p, (select p.page_id, p.page_title from categorylinks as c,page as p  where c.cl_to = "User_sk" and c.cl_from = p.page_id) as v1 
+ where v1.page_id = pl.pl_from and p.page_title = pl.pl_title) as v2, wiki_meta as w, wiki_meta as w1  where v2.pl_from = w.id and v2.page_id = w1.id and v2.pl_from != v2.page_id
+ group by v2.pl_from order by diff DESC limit 1;
++---------+-------------+
+| pl_from | diff        |
++---------+-------------+
+|    1826 | 10506189809 |
++---------+-------------+
+1 row in set (0.38 sec)
+
+```
+
+This gives you the most outdated page.
+
+Note: One thing is to be noted, that diff may be negative for all pages for a category, so one should handle the 
+particular case.
+
+
+
