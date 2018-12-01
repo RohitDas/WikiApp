@@ -5,8 +5,8 @@ from django.db import connection
 from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query, handle_categorylinks_query
 from .cache import cache
 from .query_stats import query_stats
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 
+BATCH = 25
 logger = logging.getLogger("info")
 error_logger = logging.getLogger("django_error")
 
@@ -37,43 +37,41 @@ def results(request):
     elif 'cl' in request.POST:
         return handle_categorylinks_query(request)
 
-g_paginator, g_desc= None, None
-
 def general_results(request):
-    global  g_paginator, g_desc
     start_time = time.time()
     cursor = connection.cursor()
     try:
-        query = request.POST['query']
-        logger.info("Running query: {}".format(query))
-        if cache.has_key(query):
+        original_query = request.POST['query'].strip().strip(";")
+        logger.info("Running query: {}".format(original_query))
+        if cache.has_key(original_query):
             logger.info("Data fetched from cache")
             page = request.GET.get('page', 1)
-            desc, results, pages = cache.get(query + str(page))
+            desc, results = cache.get(original_query + str(page))
         else:
             logger.info("Data fetched from database")
             page = request.GET.get('page', 1)
-            if page == 1:
-                cursor.execute(query)
-                objs = cursor.fetchall()
-                g_desc = [desc[0]for desc in cursor.description]
-                g_paginator = Paginator(objs, 50)  # Show 50 contacts per page
-
-            print('page', page)
-            pages = g_paginator.get_page(page)
+            print("Page: ", page)
+            query = original_query + " limit {} offset {} ;".format(BATCH, (int(page) - 1)*BATCH)
+            print(query)
+            cursor.execute(query)
+            objs = cursor.fetchall()
+            print(objs)
+            desc = [desc[0]for desc in cursor.description]
+            print('Type page', type(page))
+            #pages = g_paginator.get_page(page)
             results = []
-            for page_obj in pages:
+            for page_obj in objs:
                 results.append(page_obj)
-            cache.put(query + str(page), (g_desc, results, pages))
+            cache.put(query + str(page), (desc, results))
             logger.info('Data stored in cache')
             logger.info("Data is cached")
-            desc = g_desc
         end_time = time.time()
-        return render(request, "querymanager/results.html", {
+        return render(request, "querymanager/results_2.html", {
             'results': results,
             'error_message': '',
-            'query': query,
-            'page': pages,
+            'query': original_query,
+            'prev_page': None if page == 1 else int(page) - 1,
+            'next_page': int(page)+1 if len(results) == BATCH else None,
             'desc': desc,
             'time_taken': end_time - start_time,
             'name': 'query'
@@ -94,6 +92,7 @@ def category_view(request):
     return render(request, "querymanager/outdated.html", {})
 
 
+
 def get_most_outdated(request):
     """
     This view handles the request which provides for each category
@@ -107,13 +106,36 @@ def get_most_outdated(request):
         if cache.has_key(category):
             most_outdated_page = cache.get(category)
         else:
-            # The first query provides the timestamp of the maximum last modification time of the pages referred to by the page belonging to a category.
-            query = """select distinct v2.pl_from as page_id, v2.pl_title as title,  max(w.ts - w1.ts) as diff from (select pl.pl_from, pl.pl_title, p.page_id from pagelinks as pl, page as p, (select p.page_id, p.page_title from categorylinks 
-            as c,page as p  where c.cl_to = "{}" and c.cl_from = p.page_id) as v1 where v1.page_id = pl.pl_from and p.page_title = pl.pl_title) as v2, wiki_meta as w, wiki_meta as w1  where v2.pl_from = w.id and v2.page_id = w1.id and v2.pl_from != v2.page_id 
-            group by v2.pl_from, v2.pl_title order by diff DESC limit 1;""".format(category)
-            print(query)
-            cursor.execute(query)
-            most_outdated_page = cursor.fetchall()[0]
+            query_1 = """select p.page_id, p.page_title from categorylinks 
+                         as c,page as p  where c.cl_to = "{}" and c.cl_from = p.page_id
+                      """.format(category)
+            cursor.execute(query_1)
+
+            max_outdated = None
+            for val in cursor:
+                print(val)
+                #get ts of current val.
+                ts_query = """select max(ts) from wiki_meta where id = {} group by id""".format(val[0])
+                cursor.execute(ts_query)
+                try:
+                    ts_of_category_page = cursor.fetchall()[0][0]
+                except:
+                    continue
+                pagelinks_query = """ select page_id from pagelinks, page  where pl_from = {} and pl_title = page_title""".format(val[0])
+                cursor.execute(pagelinks_query)
+                pagelinks_ids = [val[0] for val in cursor.fetchall()]
+                if not pagelinks_ids:
+                    continue
+                else:
+                    ts_query = """select id, max(ts) from wiki_meta where id in {} group by id""".format(tuple(pagelinks_ids))
+                    cursor.execute(ts_query)
+                    referree_list_max = sorted([(val[0], val[1] - ts_of_category_page) for val in cursor.fetchall()], key=lambda k: k[1], reverse=True)[0]
+
+                if max_outdated is None or max_outdated[2] < referree_list_max[1]:
+                    max_outdated = (val[0], referree_list_max[0], referree_list_max[1])
+                print("TS: ", max_outdated)
+            print("MAX", max_outdated)
+            most_outdated_page = max_outdated
             print(most_outdated_page)
             cache.put(category, most_outdated_page)
 
@@ -121,7 +143,7 @@ def get_most_outdated(request):
             'category': category,
             'error_message': None,
             'desc': ('page_id', 'difference', 'time_taken(secs)'),
-            'results': (most_outdated_page[0], most_outdated_page[1], time.time() - start_time)})
+            'results': (most_outdated_page[0], most_outdated_page[2], time.time() - start_time)})
 
     except Exception as e:
         error_logger.error(str(e))
