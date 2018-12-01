@@ -123,7 +123,7 @@ def get_most_outdated(request):
             for val in cursor:
                 print(val)
                 #get ts of current val.
-                ts_query = """select max(ts) from wiki_meta where id = {} group by id""".format(val[0])
+                ts_query = """select max(ts) from wiki_meta where wid = {} group by wid""".format(val[0])
                 cursor.execute(ts_query)
                 try:
                     ts_of_category_page = cursor.fetchall()[0][0]
@@ -135,12 +135,12 @@ def get_most_outdated(request):
                 if not pagelinks_ids:
                     continue
                 else:
-                    ts_query = """select id, max(ts) from wiki_meta where id in {} group by id""".format(tuple(pagelinks_ids))
+                    ts_query = """select wid, max(ts) from wiki_meta where wid in {} group by wid""".format(tuple(pagelinks_ids))
                     cursor.execute(ts_query)
                     referree_list_max = sorted([(val[0], val[1] - ts_of_category_page) for val in cursor.fetchall()], key=lambda k: k[1], reverse=True)[0]
 
-                if max_outdated is None or max_outdated[2] < referree_list_max[1]:
-                    max_outdated = (val[0], referree_list_max[0], referree_list_max[1])
+                if max_outdated is None or max_outdated[3] < referree_list_max[1]:
+                    max_outdated = (val[0], val[1], referree_list_max[0], referree_list_max[1])
                 print("TS: ", max_outdated)
             print("MAX", max_outdated)
             most_outdated_page = max_outdated
@@ -150,8 +150,8 @@ def get_most_outdated(request):
         return render(request, "querymanager/outdated_result.html", {
             'category': category,
             'error_message': None,
-            'desc': ('page_id', 'difference', 'time_taken(secs)'),
-            'results': (most_outdated_page[0], most_outdated_page[2], time.time() - start_time)})
+            'desc': ('page_id', 'page_title', 'difference', 'time_taken(secs)'),
+            'results': (most_outdated_page[0], most_outdated_page[1], most_outdated_page[3], time.time() - start_time)})
 
     except Exception as e:
         error_logger.error(str(e))
