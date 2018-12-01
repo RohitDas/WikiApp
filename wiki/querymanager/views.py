@@ -1,5 +1,6 @@
 import time
 import logging
+import re
 from django.shortcuts import render
 from django.db import connection
 from .handlers import handle_category_query, handle_page_query, handle_pagelinks_query, handle_categorylinks_query
@@ -9,6 +10,9 @@ from .query_stats import query_stats
 BATCH = 25
 logger = logging.getLogger("info")
 error_logger = logging.getLogger("django_error")
+disallowed_queries = ['update', 'insert', 'alter']
+r = re.compile(r"limit|describe|update|insert", re.IGNORECASE)
+
 
 def index(request):
     return render(request, "querymanager/index.html", {})
@@ -40,9 +44,11 @@ def results(request):
 def general_results(request):
     start_time = time.time()
     cursor = connection.cursor()
+    is_limiting_query = False
     try:
         original_query = request.POST['query'].strip().strip(";")
         logger.info("Running query: {}".format(original_query))
+        desc = None
         if cache.has_key(original_query):
             logger.info("Data fetched from cache")
             page = request.GET.get('page', 1)
@@ -50,14 +56,16 @@ def general_results(request):
         else:
             logger.info("Data fetched from database")
             page = request.GET.get('page', 1)
-            print("Page: ", page)
-            query = original_query + " limit {} offset {} ;".format(BATCH, (int(page) - 1)*BATCH)
+            #Handling of limiting and original query
+            if not r.findall(original_query):
+                query = original_query + " limit {} offset {} ;".format(BATCH, (int(page) - 1)*BATCH)
+            else:
+                query = original_query
+                is_limiting_query = True
             print(query)
             cursor.execute(query)
             objs = cursor.fetchall()
-            print(objs)
             desc = [desc[0]for desc in cursor.description]
-            print('Type page', type(page))
             #pages = g_paginator.get_page(page)
             results = []
             for page_obj in objs:
@@ -71,7 +79,7 @@ def general_results(request):
             'error_message': '',
             'query': original_query,
             'prev_page': None if page == 1 else int(page) - 1,
-            'next_page': int(page)+1 if len(results) == BATCH else None,
+            'next_page': int(page)+1 if (len(results) == BATCH and not is_limiting_query) else None,
             'desc': desc,
             'time_taken': end_time - start_time,
             'name': 'query'
